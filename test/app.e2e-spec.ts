@@ -1,12 +1,12 @@
+// ... existing code ...
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { AppModule } from '../src/app.module';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication;
+describe('App E2E', () => {
+  let app;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -15,10 +15,18 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/auth/login (POST)', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .post('/auth/login')
+      .send({ username: 'test', password: 'test' })
+      .expect(201)
+      .expect(({ body }) => {
+        expect(body).toHaveProperty('access_token');
+      });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
+// ... existing code ...
