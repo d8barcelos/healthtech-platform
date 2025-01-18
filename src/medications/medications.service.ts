@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import medications from './data/medications';
+import medications, { Medication } from './data/medications';
 
 @Injectable()
 export class MedicationsService {
@@ -11,7 +11,11 @@ export class MedicationsService {
         return medications.find(medication => medication.id === id);
     }    
 
-    searchMedications() {
-        return 'Search Medications';
+    filterMedications(criteria: Partial<Medication>): Medication[] {
+        return medications.filter(medication => {
+            return Object.keys(criteria).every(key => {
+                return criteria[key as keyof Medication] === medication[key as keyof Medication];
+            });
+        });
     }
 }
