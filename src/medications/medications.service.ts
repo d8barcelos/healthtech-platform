@@ -18,4 +18,8 @@ export class MedicationsService {
             });
         });
     }
+
+    searchMedicationsByName(name: string): Medication[] {
+        return medications.filter(medication => medication.name.toLowerCase().includes(name.toLowerCase()));
+    }
 }

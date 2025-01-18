@@ -20,7 +20,7 @@ export class MedicationsController {
     }
 
     @Get('search')
-    searchMedications() {
-        return 'Search Medications';
+    searchMedications(@Query('name') name: string) {
+        return this.medicationsService.searchMedicationsByName(name);
     }
 }
