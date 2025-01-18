@@ -23,7 +23,7 @@ export class AuthService {
     }
 
     generateToken(user: User): string {
-        const payload = { email: user.email, sub: user.id };
+        const payload = { email: user.email, role: user.role, sub: user.id };
         return this.jwtService.sign(payload);
     }
 
