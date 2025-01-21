@@ -1,16 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { CreateHealthMonitoringDto } from './dtos/create-health-monitoring.dto';
-import medications, { Medication } from '../medications/data/medications';
+import medications from '../medications/data/medications';
+import { PdfService } from '../report/report.service';
 
 @Injectable()
 export class HealthMonitoringService {
     private healthData: CreateHealthMonitoringDto[] = [];
 
-    createHealthMonitoring(data: CreateHealthMonitoringDto): { data: CreateHealthMonitoringDto, analysis: string, recommendation: string } {
+    constructor(
+        private readonly pdfService: PdfService
+    ) {}
+
+    async createHealthMonitoring(data: CreateHealthMonitoringDto): Promise<{ pdf: Buffer }> {
         this.healthData.push(data);
         const analysis = this.analyzeHealthData(data);
         const recommendation = this.recommendAction(data);
-        return { data, analysis, recommendation };
+
+        const pdf = await this.pdfService.generatePdf(data, analysis, recommendation);
+        return { pdf };
     }
 
     getAllHealthMonitoring(): CreateHealthMonitoringDto[] {
@@ -66,6 +73,7 @@ export class HealthMonitoringService {
             recommendation += 'Consult a doctor for low oxygen saturation. ';
         }
 
+        // Example medication recommendation based on symptoms
         if (data.heartRate > 100) {
             const medication = medications.find(med => med.name === 'Amlodipine');
             if (medication) {
@@ -74,5 +82,12 @@ export class HealthMonitoringService {
         }
 
         return recommendation;
+    }
+
+    private isCritical(data: CreateHealthMonitoringDto): boolean {
+        return data.heartRate < 50 || data.heartRate > 120 ||
+               data.bloodPressure !== '120/80' ||
+               data.temperature < 35.0 || data.temperature > 38.0 ||
+               data.oxygenSaturation < 90;
     }
 }
