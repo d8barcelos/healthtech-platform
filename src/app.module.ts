@@ -6,6 +6,7 @@ import { MiddlewareModule } from './middleware/middleware.module';
 import { PrescriptionsModule } from './prescriptions/prescriptions.module';
 import { MedicationsModule } from './medications/medications.module';
 import { AppointmentsModule } from './appointments/appointments.module';
+import { HealthMonitoringModule } from './health-monitoring/health-monitoring.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AppointmentsModule } from './appointments/appointments.module';
     PrescriptionsModule,
     MedicationsModule,
     AppointmentsModule,
+    HealthMonitoringModule,
   ],
 })
 export class AppModule {}
